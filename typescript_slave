@@ -1,6 +1,10 @@
 Script started on 2024-03-19 11:36:46+00:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="211" LINES="53"]
-[?2004hroot@slave:~# systemctl status mu[Kysql
-[?2004l[?1h=[0;1;32m●[0m mysql.service - Percona Server[m
+
+### Проверяем работу mysql
+[?2004hroot@slave:~# systemctl status mu[Kysql
+[?2004l
+[?1h=
+[0;1;32m●[0m mysql.service - Percona Server[m
      Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)[m
      Active: [0;1;32mactive (running)[0m since Tue 2024-03-19 11:32:34 UTC; 4min 20s ago[m
     Process: 6201 ExecStartPre=/usr/share/mysql/mysql-systemd-start pre (code=exited, status=0/SUCCESS)[m
@@ -14,8 +18,11 @@ Script started on 2024-03-19 11:36:46+00:00 [TERM="xterm-256color" TTY="/dev/pts
 [m
 Mar 19 11:32:33 slave systemd[1]: Starting Percona Server...[m
 Mar 19 11:32:34 slave systemd[1]: Started Percona Server.[m
-[K[?1l>[?2004hroot@slave:~# mysql
-[?2004lWelcome to the MySQL monitor.  Commands end with ; or \g.
+
+### Заходим в бд
+[K[?1l>[?2004hroot@slave:~# mysql
+[?2004l
+Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 8
 Server version: 8.0.36-28 Percona Server (GPL), Release '28', Revision '47601f19'$
 
@@ -28,6 +35,7 @@ owners.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
+### Загружаем базу с мастера
 mysql> SOURCE /vagrant/master.sql
 Query OK, 0 rows affected (0.00 sec)
 
@@ -875,6 +883,7 @@ Query OK, 0 rows affected (0.00 sec)
 
 Query OK, 0 rows affected (0.00 sec)
 
+### Проверяем загруженные данные
 mysql> show databases;
 +--------------------+
 | Database           |
@@ -887,7 +896,9 @@ mysql> show databases;
 +--------------------+
 5 rows in set (0.00 sec)
 
-mysql> use be[14Gt [15G;
+mysql> use be
+[14Gt 
+[15G;
 Database changed
 mysql> show tables;
 +---------------+
@@ -901,15 +912,19 @@ mysql> show tables;
 +---------------+
 5 rows in set (0.00 sec)
 
+### Останавливаем реплику
 mysql> stop replica;
 Query OK, 0 rows affected, 1 warning (0.00 sec)
 
+### Назначаем сервер в квчестве мастера
 mysql> CHANGE REPLICATION SOURCE TO SOURCE_HOST='192.168.50.10', SOURCE_USER='repl', SOURCE_PASSWORD='123', SOURCE_AUTO_POSITION = 1, GET_SOURCE_PUBLIC_KEY = 1;
 Query OK, 0 rows affected, 2 warnings (0.00 sec)
 
+### Запускаем реплику
 mysql> start replica;
 Query OK, 0 rows affected (0.01 sec)
 
+### Проверяем статус
 mysql> SHOW REPLICA STATUS\G
 *************************** 1. row ***************************
              Replica_IO_State: Waiting for source to send event
@@ -974,6 +989,7 @@ Source_SSL_Verify_Server_Cert: No
             Network_Namespace: 
 1 row in set (0.00 sec)
 
+### После добавления тестовой таблицы на мастере, убеждаемся что бд синхронизировалась
 mysql> show databases;
 +--------------------+
 | Database           |
@@ -1003,6 +1019,7 @@ mysql> show tables;
 mysql> exit
 Bye
 [?2004hroot@slave:~# exit
-[?2004lexit
+[?2004l
+exit
 
 Script done on 2024-03-19 11:39:47+00:00 [COMMAND_EXIT_CODE="0"]
