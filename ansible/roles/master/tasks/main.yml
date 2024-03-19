@@ -1,0 +1,22 @@
+---
+- name: copy config Mysql
+  copy:
+    src: templates/mysql.cnf
+    dest: /etc/mysql/conf.d/mysql.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy damp
+  copy:
+    src: templates/bet.dmp
+    dest: /home/vagrant/bet.dmp
+    owner: root
+    group: root
+    mode: 0640
+
+- name: restart mysql
+  service: 
+    name: mysql
+    state: restarted
+    enabled: yes

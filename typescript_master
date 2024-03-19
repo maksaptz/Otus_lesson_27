@@ -1,0 +1,132 @@
+Script started on 2024-03-19 11:33:10+00:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="211" LINES="53"]
+[?2004hroot@master:~# systemcd[Ktl statut[Ks mysql
+[?2004l[?1h=[0;1;32m●[0m mysql.service - Percona Server[m
+     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)[m
+     Active: [0;1;32mactive (running)[0m since Tue 2024-03-19 11:32:30 UTC; 49s ago[m
+    Process: 6242 ExecStartPre=/usr/share/mysql/mysql-systemd-start pre (code=exited, status=0/SUCCESS)[m
+   Main PID: 6287 (mysqld)[m
+     Status: "Server is operational"[m
+      Tasks: 39 (limit: 1114)[m
+     Memory: 374.7M[m
+        CPU: 3.814s[m
+     CGroup: /system.slice/mysql.service[m
+             └─6287 /usr/sbin/mysqld[m
+[m
+Mar 19 11:32:30 master systemd[1]: Stopped Percona Server.[m
+Mar 19 11:32:30 master systemd[1]: [0;1;39m[0;1;31m[0;1;39mmysql.service: Consumed 2.776s CPU time.[0m[m
+Mar 19 11:32:30 master systemd[1]: Starting Percona Server...[m
+Mar 19 11:32:30 master systemd[1]: Started Percona Server.[m
+[K[?1l>[?2004hroot@master:~# mysql
+[?2004lWelcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.36-28 Percona Server (GPL), Release '28', Revision '47601f19'$
+
+Copyright (c) 2009-2024 Percona LLC and/or its affiliates
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> CREATE DATABASE bet;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> exit
+Bye
+[?2004hroot@master:~# [7mmysql -uroot -p -D bet < /vagrant/bet.dmp[27m[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cmysql -uroot -p -D bet < /vagrant/bet.dmp[C/vagrant/bet.dmph/vagrant/bet.dmpo/vagrant/bet.dmpm/vagrant/bet.dmpe/vagrant/bet.dmp
+[?2004lEnter password: 
+[?2004hroot@master:~# use bet;
+[?2004lbash: use: command not found
+[?2004hroot@master:~# mysql
+[?2004lWelcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 10
+Server version: 8.0.36-28 Percona Server (GPL), Release '28', Revision '47601f19'$
+
+Copyright (c) 2009-2024 Percona LLC and/or its affiliates
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use bet;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show tables;
++------------------+
+| Tables_in_bet    |
++------------------+
+| bookmaker        |
+| competition      |
+| events_on_demand |
+| market           |
+| odds             |
+| outcome          |
+| v_same_event     |
++------------------+
+7 rows in set (0.00 sec)
+
+mysql> CREATE USER 'repl'@'%' IDENTIFIED WITH 'caching_sha2_password' BY '123';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> GRANT REPLICATION SLAVE ON *.* TO repl@'%';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> exit
+Bye
+[?2004hroot@master:~# [7mmysqldump --all-databases --triggers --routines --master-data[27m
+[7m--ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event -uroot -p > master.sql[27m[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cmysqldump --all-databases --triggers --routines --master-data
+--ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event -uroot -p > master.sql[C/master.sqlvmaster.sqlamaster.sqlgmaster.sqlrmaster.sqlamaster.sqlnmaster.sqltmaster.sql/master.sql[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C--ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event -uroot -p > /vagrant/master.sql
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1@ 
+[?2004lWARNING: --master-data is deprecated and will be removed in a future version. Use --source-data instead.
+Enter password: 
+Warning: A partial dump from a server that has GTIDs will by default include the GTIDs of all transactions, even those that changed suppressed parts of the database. If you don't want to restore GTIDs, pass --set-gtid-purged=OFF. To make a complete dump, pass --all-databases --triggers --routines --events. 
+[?2004hroot@master:~# mysql
+[?2004lWelcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 13
+Server version: 8.0.36-28 Percona Server (GPL), Release '28', Revision '47601f19'$
+
+Copyright (c) 2009-2024 Percona LLC and/or its affiliates
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> CREATE DATABASE test;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use test
+Database changed
+mysql> CREATE TABLE Staff (
+    ->     id INT PRIMARY KEY,
+    ->     name VARCHAR(255),
+    ->     position VARCHAR(30),
+    ->     birthday Date,
+    ->     has_children BOOLEAN
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> show tables;
++----------------+
+| Tables_in_test |
++----------------+
+| Staff          |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> exit
+Bye
+[?2004hroot@master:~# exit
+[?2004lexit
+
+Script done on 2024-03-19 11:40:13+00:00 [COMMAND_EXIT_CODE="0"]
